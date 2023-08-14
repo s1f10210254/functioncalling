@@ -5,3 +5,4 @@ node_modules/
 /.env
 /functiontweet.ts
 /tests/example.spec.ts
+/api.ts

@@ -2,6 +2,7 @@ import { test } from "node:test";
 import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
 import { escape } from "querystring";
 import * as dotenv from 'dotenv'
+import { extractEmotionalText, emotionalKeywords, text } from "./emotinal";
 dotenv.config();
 const playwright = require('playwright');
 const axios = require('axios');
@@ -14,13 +15,18 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
+// 感情的な文章を抜き取ったもの(emotinal.ts参照)
+const emotinalSentences = extractEmotionalText(text, emotionalKeywords);
+
 
 
 const prompt: ChatCompletionRequestMessage = {
   role: "user",
-  content:
-    "a,nの引数をもちa**nの計算を行う関数をツイートして"
+  content:emotinalSentences + "の文章の内容でツイートして",
+    // "a,nの引数をもちa**nの計算を行う関数をツイートして"
+    
 };
+
 
 
 const getRecommend_book = (title: string, description:string) =>{
@@ -57,8 +63,16 @@ const lufy_zinkaku = (content : string) =>{
 }
 
 const getTwitter = (content: string)=>{
-  if (content){
+  if (content.includes("の文章の内容でツイートして")){
     return `${content}`;
+  }else{
+    return "コンテンツがありません";
+  }
+}
+
+const ToSummarize =(content: string)=>{
+  if(content){
+    return `${content}`
   }else{
     return "コンテンツがありません";
   }
@@ -79,7 +93,11 @@ const functions = {
   getTwitter,
   getPython,  
   runLuffyTwitter,
+  ToSummarize
 } as const;
+
+
+
 
 const func = async () => {
   const res = await openai.createChatCompletion({
@@ -131,13 +149,13 @@ const func = async () => {
       },
       {
         name:"getTwitter",
-        description:"ツイッターで1行程度で今日の出来事をツイートします",
+        description:"の文章の内容でツイートしてと書かれた以前の文字を１０文字程度にまとめます",
         parameters :{
           type : "object",
           properties:{
             name :{
               type :"string",
-              description: "ツイッターで１行程度で今日の出来事をツイートします",
+              description: "の文章の内容でツイートしてと書かれた以前の文字を１０文字程度にまとめます",
             },
           },
           required : ["name"],
@@ -267,6 +285,7 @@ const func = async () => {
         const tweetContent = `${argumentsJson.name}`;
         await runplaywrightTweet(tweetContent)
     }
+    
   };
 };
 
