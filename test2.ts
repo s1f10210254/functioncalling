@@ -21,6 +21,7 @@ const openai = new OpenAIApi(configuration);
 
 
 
+
 const prompt: ChatCompletionRequestMessage = {
   role: "user",
   // content:emotinalSentences + "の文章の内容でツイートして",
@@ -35,18 +36,6 @@ const getRecommend_book = (title: string, description:string) =>{
     return title && description ? "本" : "パラメータが足りません";
 }
 
-// const getStrongestSportsCountry = (sport: string) => {
-//   switch (sport) {
-//     case "サッカー":
-//       return "アルゼンチン";
-//     case "レスリング":
-//       return "日本";
-//     case "卓球":
-//       return "中国";
-//     default:
-//       return "アメリカ";
-//   }
-// };
 
 const getPython = (content: string) =>{
   if(content){
@@ -56,13 +45,7 @@ const getPython = (content: string) =>{
   }
 }
 
-// const lufy_zinkaku = (content : string) =>{
-//   if(content){
-//     return `${content}`;
-//   }else{
-//     return "コンテンツがありません";
-//   }
-// }
+
 
 // const getTwitter = (content: string)=>{
 //   if (content.includes("の文章の内容でツイートして")){
@@ -82,20 +65,14 @@ const ToSummarize =(content: string)=>{
 }
 
 
-// const runLuffyTwitter = (args: { name: string}) =>{
-//   const luffyContent = lufy_zinkaku("ツイッターでつぶやいて");
-//   const tweetContent = getTwitter(luffyContent);
-// //   const run = runplaywrightTweet(tweetContent)
-//   return tweetContent;
-// }
+
 
 const functions = {
-  // lufy_zinkaku,
+  
   getRecommend_book,
-  // getStrongestSportsCountry,
+  
   // getTwitter,
   getPython,  
-  // runLuffyTwitter,
   ToSummarize
 } as const;
 
@@ -107,48 +84,6 @@ const func = async () => {
     messages: [prompt],
     function_call: "auto",
     functions: [
-    //   {
-    //     name: "runplaywrightTweet",
-    //     description:"ツイートを送信する",
-    //     parameters:{
-    //         type: "object",
-    //         properties:{
-    //             content:{
-    //                 type:"string",
-    //                 description: "ツイートする内容",
-    //             },
-    //         },
-    //         required:["content"],
-    //     }
-    //   },
-      // {
-      //   name:"lufy_zinkaku",
-      //   description: "ワンピースのルフィに成り代わって発言して",
-      //   parameters :{
-      //     type : "object",
-      //     properties:{
-      //       name :{
-      //         type :"string",
-      //         description: "ワンピースのルフィに成り代わって発言して",
-      //       },
-      //     },
-      //     required : ["name"],
-      //   },
-      // },
-      // {
-      //   name: "getStrongestSportsCountry",
-      //   description: "スポーツの強い国を取得",
-      //   parameters:{
-      //     type: "object",
-      //     properties:{
-      //       name:{
-      //         type:"string",
-      //         description: "sport",
-      //       },
-      //     },
-      //     required : ["name"],
-      //   },
-      // },
       // {
       //   name:"getTwitter",
       //   description:"の文章の内容でツイートしてと書かれた以前の文章を１０文字程度にまとめてください",
@@ -195,21 +130,6 @@ const func = async () => {
           require :["name"],
         },
       },
-      // {
-      //   name : "runLuffyTwitter",
-      //   description:"ルフィの人格でツイッターでつぶやく",
-      //   parameters:{
-      //     type: "object",
-      //     properties:{
-      //       name :{
-      //         type: "string",
-      //         description: "ルフィの人格でツイッターでつぶやく",
-      //       },
-      //     },
-      //     require: ["name"],
-      //   },
-      // },
-
       {
         name: "ToSummarize",
         description:"文章の内容を伐採して５文字にしてください。 例、○○で○○。 動作で状態。",
@@ -314,7 +234,27 @@ const getTrend = async() => {
   if(!functionCall){
     console.log("functioncallingはよびだされませんでした");
   }
+  // if (functionCall) {
+  //   const args =JSON.parse(functionCall.arguments || "{}");
 
+  //   // @ts-ignore
+  //   const funcRes = functions[functionCall.name](args.name);
+
+  //   //functioncallingが読み出された時の処理
+  //   const res2 = await openai.createChatCompletion({
+  //     model: "gpt-3.5-turbo",
+  //     messages: [
+  //       prompt,
+  //       message,
+  //       {
+  //         role: "function",
+  //         content: funcRes,
+  //         name: functionCall.name,
+  //       },
+  //     ],
+  //   });
+  //   console.log("answer", res2.data.choices[0]);
+  //   const responseMessage = res2.data.choices[0].message;
 
   if (functionCall) {
     const args =JSON.parse(functionCall.arguments || "{}");
